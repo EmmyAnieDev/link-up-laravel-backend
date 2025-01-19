@@ -26,7 +26,11 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->successResponse([
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
             'token' => $token
         ], 'Registration successful', 201);
     }
@@ -37,7 +41,7 @@ class AuthController extends Controller
             return $this->errorResponse('Invalid credentials', 401);
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::with('image')->where('email', $request->email)->first();
         $user->tokens()->delete();
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -46,6 +50,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'profile_photo' => $user->image->image_path ?? null,
             ],
             'token' => $token
         ], 'Login successful');

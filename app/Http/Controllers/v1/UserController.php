@@ -77,39 +77,6 @@ class UserController extends Controller
 
 
     /**
-     * Upload/Update Image for the currently authenticated user.
-     */
-    public function uploadProfileImage(UploadPhotoRequest $request)
-    {
-        $user = Auth::id();
-
-        if (!$user) {
-            return $this->errorResponse('Please Login to upload image', 401);
-        }
-
-        $existingImage = Images::where('user_id', $user)->first();
-
-        if ($existingImage) {
-            $existingFilePath = public_path($existingImage->image_path);
-            if (file_exists($existingFilePath)) {
-                unlink($existingFilePath);
-            }
-
-            $existingImage->delete();
-        }
-
-        $imagePath = $this->uploadPhoto($request->validated('file'), '');
-
-        $image = new Images();
-        $image->user_id = Auth::id();
-        $image->image_path = $imagePath;
-        $image->save();
-
-        return $this->successResponse($image,'Image uploaded successfully', 201);
-    }
-
-
-    /**
      * delete the currently authenticated user account.
      */
     public function deleteAccount()

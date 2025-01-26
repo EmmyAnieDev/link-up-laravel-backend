@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\SendMessageRequest;
 use App\Models\User;
 use App\Models\v1\Message;
+use App\Models\v1\MessageRoom;
 use App\Traits\v1\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +36,7 @@ class ChatController extends Controller
         $other_user = User::findOrFail($request->other_user_id);
 
         $messages = Message::where('sender_id', Auth::id())->where('receiver_id', $request->other_user_id)
-           ->orWhere('sender_id', $request->other_user_id)->where('receiver_id', Auth::id())->get();
+           ->orWhere('sender_id', $request->other_user_id)->where('receiver_id', Auth::id())->orderBy('created_at', 'asc')->get();
 
         return response()->json([
             'user' => $other_user,
@@ -46,15 +47,28 @@ class ChatController extends Controller
     }
 
 
-    function sendMessage(SendMessageRequest $request)
+    public function sendMessage(SendMessageRequest $request)
     {
         $message = Message::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $request->receiver_id,
             'message' => $request->message,
             'delivered' => false, 
-            'read' => false, 
+            'read' => false,
+            'sent_at' => now(),
         ]);
+
+        // Update or create the message room for the sender and receiver
+        MessageRoom::updateOrCreate(
+            [
+                'user_one_id' => min(Auth::id(), $request->receiver_id),
+                'user_two_id' => max(Auth::id(), $request->receiver_id),
+            ],
+            [
+                'last_message' => $request->message,
+                'last_message_time' => now(),
+            ]
+        );
 
         event(new SendMessageEvent($request->message, Auth::id(), $request->receiver_id));
 

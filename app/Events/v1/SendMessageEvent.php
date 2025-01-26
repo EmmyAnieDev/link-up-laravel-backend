@@ -30,9 +30,11 @@ class SendMessageEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
+            new PrivateChannel('chat.' . $this->senderId),
             new PrivateChannel('chat.' . $this->receiverId),
         ];
     }
+
 
     public function broadcastWith(): array
     {
@@ -40,6 +42,8 @@ class SendMessageEvent implements ShouldBroadcast
             'message' => $this->message,
             'senderId' => $this->senderId,
             'receiverId' => $this->receiverId,
+            'last_message' => $this->message,
+            'last_message_time' => now()->toIso8601String(),
         ];
     }
 

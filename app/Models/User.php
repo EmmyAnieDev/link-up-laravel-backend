@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\v1\Images;
+use App\Models\v1\MessageRoom;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -52,4 +53,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(Images::class);
     }
+
+    public function message_rooms()
+    {
+        return $this->hasMany(MessageRoom::class, 'user_one_id')
+            ->orWhere('user_two_id', $this->id);
+    }
+
 }

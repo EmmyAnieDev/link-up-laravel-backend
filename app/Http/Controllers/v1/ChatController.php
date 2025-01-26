@@ -56,9 +56,39 @@ class ChatController extends Controller
             'read' => false, 
         ]);
 
-        event(new SendMessageEvent($request->message, Auth::id() , $request->receiver_id));
-    
+        event(new SendMessageEvent($request->message, Auth::id(), $request->receiver_id));
 
         return $this->successResponse($message, 'Message sent', 201);
     }
+
+
+    public function unreadMessageCounts()
+    {
+        $unreadCounts = Message::select('sender_id', \Illuminate\Support\Facades\DB::raw('COUNT(*) as unread_count'))
+            ->where('receiver_id', Auth::id())
+            ->where('read', false)
+            ->groupBy('sender_id')
+            ->get();
+
+        return $this->successResponse($unreadCounts, 'unread message count fetched');
+    }
+
+
+    public function removeUnreadMessageCounts(Request $request)
+    {
+        $validated = $request->validate([
+            'sender_id' => 'required|integer|exists:users,id',
+        ]);
+
+        Message::where('receiver_id', Auth::id())
+            ->where('sender_id', $validated['sender_id'])
+            ->where('read', false) // Only update unread messages
+            ->update([
+                'read' => true,
+                'read_at' => now(), // Optional: update the read_at timestamp
+            ]);
+
+        return $this->successResponse([], 'Unread count removed.');
+    }
+
 }

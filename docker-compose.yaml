@@ -33,9 +33,9 @@ services:
     image: postgres:latest
     container_name: laravel_postgres
     environment:
-      POSTGRES_USER: # YOUR_POSTGRES_DATABASE_USERNAME
-      POSTGRES_PASSWORD: # YOUR_POSTGRES_DATABASE_PASSWORD
-      POSTGRES_DB: # YOUR_POSTGRES_DATABASE_NAME
+      POSTGRES_USER: postgres # YOUR_POSTGRES_DATABASE_USERNAME
+      POSTGRES_PASSWORD: 2411 # YOUR_POSTGRES_DATABASE_PASSWORD
+      POSTGRES_DB: link-up # YOUR_POSTGRES_DATABASE_NAME
     ports:
       - "5433:5432"
     volumes:

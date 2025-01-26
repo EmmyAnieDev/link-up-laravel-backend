@@ -16,9 +16,13 @@ return new class extends Migration
             $table->foreignId('sender_id')->constrained('users')->onUpdate('cascade');
             $table->foreignId('receiver_id')->constrained('users')->onUpdate('cascade');
             $table->text('message');
-            $table->boolean('delivered')->default(false);
+            $table->boolean('sent')->default(false); 
+            $table->boolean('delivered')->default(false); 
             $table->boolean('read')->default(false); 
-            $table->timestamps();
+            $table->timestamp('sent_at')->nullable(); 
+            $table->timestamp('delivered_at')->nullable(); 
+            $table->timestamp('read_at')->nullable();
+            $table->timestamps(); 
         });
     }
 

@@ -25,6 +25,10 @@ Route::group(['prefix' => 'v1'], function () {
 
             Route::get('/fetch-messages', [ChatController::class, 'fetchMessages']);
             Route::post('/send-message', [ChatController::class, 'sendMessage']);
+
+            Route::get('/unread-messages-count', [ChatController::class, 'unreadMessageCounts']);
+            Route::post('/remove-unread-messages-count', [ChatController::class, 'removeUnreadMessageCounts']);
+
         });
     });
 });

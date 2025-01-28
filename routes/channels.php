@@ -13,3 +13,18 @@ Broadcast::channel('chat.{id}', function ($user, $id) {
 
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('online', function ($user) {
+    // $socketId = request('socket_id');
+    // $channelName = request('channel_name');
+
+    // Log::info('Signature Debug', [
+    //     'socket_id' => $socketId,
+    //     'channel_name' => $channelName,
+    //     'user' => $user->toArray(),
+    // ]);
+
+    return $user->toArray();
+});
+
+
